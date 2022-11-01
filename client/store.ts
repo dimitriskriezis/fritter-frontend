@@ -12,7 +12,11 @@ const store = new Vuex.Store({
     filter: null, // Username to filter shown freets by (null = show all)
     freets: [], // All freets created in the app
     username: null, // Username of the logged in user
-    alerts: {} // global success/error messages encountered during submissions to non-visible forms
+    userId: null,
+    groupId: null,
+    searching: false,
+    alerts: {}, // global success/error messages encountered during submissions to non-visible forms
+    groups: [], // all groups of a user
   },
   mutations: {
     alert(state, payload) {
@@ -44,6 +48,26 @@ const store = new Vuex.Store({
        * @param freets - Freets to store
        */
       state.freets = freets;
+    },
+    setGroupId(state, groupId) {
+      state.groupId = groupId;
+    },
+    setUserId(state, userId) {
+      state.groupId = userId;
+    },
+    updateGroups(state, groups) {
+      state.groups = groups;
+    },
+    
+    async refreshGroups(state){
+      const url = `/api/groups`;
+      const r = await fetch(url);
+      const res = await r.json();
+      if(!r.ok){
+          throw new Error(res.error);
+      }
+      state.groups = res;
+      
     },
     async refreshFreets(state) {
       /**

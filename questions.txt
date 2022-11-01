@@ -1,0 +1,7 @@
+questions:
+1.add images
+2.break flex box
+3. separation of concerns?? not really (for add member to group and delete a group)
+4. robustness?
+5.position relative to parent
+6. disappear below 

@@ -1,4 +1,4 @@
-import type {Types} from 'mongoose';
+import type {Types, PopulatedDoc, Document} from 'mongoose';
 import {Schema, model} from 'mongoose';
 import type {User} from '../user/model';
 
@@ -12,16 +12,18 @@ export type Freet = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   authorId: Types.ObjectId;
   dateCreated: Date;
-  content: string;
-  dateModified: Date;
+  textContent: string;
+  imageContent: string;
+  isMultiOnly: boolean;
 };
 
 export type PopulatedFreet = {
   _id: Types.ObjectId; // MongoDB assigns each object this ID on creation
   authorId: User;
   dateCreated: Date;
-  content: string;
-  dateModified: Date;
+  textContent: string;
+  imageContent: string;
+  isMultiOnly: boolean;
 };
 
 // Mongoose schema definition for interfacing with a MongoDB table
@@ -41,13 +43,16 @@ const FreetSchema = new Schema<Freet>({
     required: true
   },
   // The content of the freet
-  content: {
+  textContent: {
     type: String,
-    required: true
+    required: false
   },
-  // The date the freet was modified
-  dateModified: {
-    type: Date,
+  imageContent: {
+    type: String,
+    required: false
+  },
+  isMultiOnly: {
+    type: Boolean,
     required: true
   }
 });

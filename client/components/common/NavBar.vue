@@ -11,9 +11,15 @@
       </h1>
     </div>
     <div class="right">
-      <router-link to="/">
-        Home
+      <router-link 
+      @click.native="leaveGroup()"
+      v-if="$store.state.groupId"
+      to="/groups">
+        Groups
       </router-link>
+      <!-- <router-link to="/">
+        Home
+      </router-link> -->
       <router-link
         v-if="$store.state.username"
         to="/account"
@@ -39,14 +45,37 @@
   </nav>
 </template>
 
+<script>
+import BlockForm from '@/components/common/BlockForm.vue';
+
+export default {
+  name: 'NavBar',
+  methods: {
+    async leaveGroup(){
+      this.$store.commit('setGroupId', null);
+      const url = `/api/groups/session`;
+      const r = await fetch(url,{method: 'DELETE'});
+      const res = await r.json();
+    
+      this.$store.commit('refreshGroups');
+
+    }
+  }
+};
+</script>
+
+
+
 <style scoped>
 nav {
     padding: 1vw 2vw;
-    background-color: #ccc;
+    background-color: #78c5df;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
+    width:100%;
+    position: fixed;
+    z-index: 1;
 }
 
 .title {

@@ -123,10 +123,10 @@ router.patch(
     freetValidator.isValidFreetContent
   ],
   async (req: Request, res: Response) => {
-    const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
+    // const freet = await FreetCollection.updateOne(req.params.freetId, req.body.content);
     res.status(200).json({
       message: 'Your freet was updated successfully.',
-      freet: util.constructFreetResponse(freet)
+      // freet: util.constructFreetResponse(freet)
     });
   }
 );

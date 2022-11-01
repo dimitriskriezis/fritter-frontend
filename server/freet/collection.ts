@@ -63,18 +63,46 @@ class FreetCollection {
   }
 
   /**
+   * Get all freets by given user that have given mode
+   * 
+   * @param {string} authorId - the id of the user whose freets we are looking for
+   * @param {number} freetFilter - number specifying which modes of freets we are selecting is 0,1,2
+   * @return {Promise<HydratedDocument<Freet>[]>} - An array of all of the freets
+   */
+   static async findAllByUserIdAndMode(authorId: Types.ObjectId | string, freetFilter: number): Promise<Array<HydratedDocument<Freet>>>{
+    if (freetFilter == 2){
+      return FreetModel.find({authorId: authorId, isMultiOnly: true}).populate('authorId');
+    }else if(freetFilter == 1){
+      return FreetModel.find({authorId: authorId, isMultiOnly: false}).populate('authorId');
+    }else{
+      return FreetModel.find({authorId: authorId}).populate('authorId');
+    }
+
+  }
+
+  /**
    * Update a freet with the new content
    *
    * @param {string} freetId - The id of the freet to be updated
    * @param {string} content - The new content of the freet
    * @return {Promise<HydratedDocument<Freet>>} - The newly updated freet
    */
-  static async updateOne(freetId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Freet>> {
-    const freet = await FreetModel.findOne({_id: freetId});
-    freet.content = content;
-    freet.dateModified = new Date();
-    await freet.save();
-    return freet.populate('authorId');
+
+    /**
+   * Get one freet with freetid and 
+   * 
+   * @param {string} authorId - the id of the user whose freets we are looking for
+   * @param {number} freetFilter - number specifying which modes of freets we are selecting is 0,1,2
+   * @return {Promise<HydratedDocument<Freet>[]>} - An array of all of the freets
+   */
+     static async findOneWithMode(freetId: Types.ObjectId | string, freetFilter: number): Promise<HydratedDocument<Freet>>{
+      if (freetFilter == 2){
+        return FreetModel.findOne({_id: freetId, isMultiOnly: true});
+      }else if(freetFilter == 1){
+        return FreetModel.findOne({_id: freetId, isMultiOnly: false});
+      }else{
+        return FreetModel.findOne({_id: freetId});
+    }
   }
 
   /**

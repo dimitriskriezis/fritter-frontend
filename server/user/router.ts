@@ -169,4 +169,33 @@ router.delete(
   }
 );
 
+
+/**
+ * Search for a user
+ * 
+ * @name POST /api/users/search
+ * 
+ * @param username - the name of the user we are searching for
+ * @throws {403} - if the user is not logged in
+ * @throws {404} - if no user corresponds to that username
+ * 
+ * @returns UserResponse with the information of the user
+ * 
+ */
+ router.post(
+  '/search',
+  [
+    userValidator.isUserLoggedIn,
+    userValidator.isUserExists
+  ],
+  async(req: Request, res:Response) => {
+    const user = await UserCollection.findOneByUsername(req.body.username);
+    res.status(201).json({
+      message: `You have successfully searched for a user`,
+      user: util.constructUserResponse(user)
+
+    });
+  }
+);
+
 export {router as userRouter};

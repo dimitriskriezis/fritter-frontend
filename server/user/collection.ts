@@ -1,7 +1,6 @@
 import type {HydratedDocument, Types} from 'mongoose';
 import type {User} from './model';
 import UserModel from './model';
-
 /**
  * This file contains a class with functionality to interact with users stored
  * in MongoDB, including adding, finding, updating, and deleting. Feel free to add
@@ -20,8 +19,9 @@ class UserCollection {
    */
   static async addOne(username: string, password: string): Promise<HydratedDocument<User>> {
     const dateJoined = new Date();
-
-    const user = new UserModel({username, password, dateJoined});
+    const strikes = 0;
+    const flagged = false;
+    const user = new UserModel({username, password, strikes, flagged, dateJoined});
     await user.save(); // Saves user to MongoDB
     return user;
   }
@@ -67,14 +67,14 @@ class UserCollection {
    * @param {Object} userDetails - An object with the user's updated credentials
    * @return {Promise<HydratedDocument<User>>} - The updated user
    */
-  static async updateOne(userId: Types.ObjectId | string, userDetails: {password?: string; username?: string}): Promise<HydratedDocument<User>> {
+  static async updateOne(userId: Types.ObjectId | string, userDetails: any): Promise<HydratedDocument<User>> {
     const user = await UserModel.findOne({_id: userId});
     if (userDetails.password) {
-      user.password = userDetails.password;
+      user.password = userDetails.password as string;
     }
 
     if (userDetails.username) {
-      user.username = userDetails.username;
+      user.username = userDetails.username as string;
     }
 
     await user.save();
@@ -90,6 +90,27 @@ class UserCollection {
   static async deleteOne(userId: Types.ObjectId | string): Promise<boolean> {
     const user = await UserModel.deleteOne({_id: userId});
     return user !== null;
+  }
+
+  /**
+   * Update the number of strikes of a user and/or flag him/her
+   */
+
+  static async addOneStrike(userId: Types.ObjectId | string) : Promise<HydratedDocument<User>>{
+    const user = await UserModel.findOne({_id: userId});
+    user.strikes = user.strikes+1;
+    if(user.strikes>2){
+      user.flagged = true;
+    }
+    await user.save();
+    return user;
+  }
+
+  /**
+   * get all the flagged users
+   */
+  static async findAllFlagged(): Promise<Array<HydratedDocument<User>>>{
+    return UserModel.find({flagged: true});
   }
 }
 

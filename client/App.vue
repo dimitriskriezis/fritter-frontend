@@ -43,6 +43,7 @@ body {
 }
 
 main {
+  margin-top: 100px;
   padding: 0 5em 5em;
 }
 
