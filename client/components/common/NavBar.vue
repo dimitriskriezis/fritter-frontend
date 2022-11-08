@@ -195,6 +195,7 @@ export default {
       this.search_tag = '';
       this.$store.commit("updateIsSearch", false);
       this.$store.commit("updateSearchedWord", null);
+      this.$store.commit("updateIsInAccount", false);
       this.$store.commit('updateFreets', []);
       if(this.$store.state.groupId){
         this.getAllFreets("0");
