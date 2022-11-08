@@ -39,6 +39,9 @@ class XCollection {
     return XModel.find({userThatXed: userId});
   }
 
+  static async deleteMany(freetId: Types.ObjectId | string): Promise<void> {
+    await XModel.deleteMany({freetId});
+  }
 }
 
 export default XCollection;

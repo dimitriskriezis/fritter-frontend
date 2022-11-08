@@ -43,7 +43,7 @@ body {
 }
 
 main {
-  margin-top: 100px;
+  margin-top: 75px;
   padding: 0 5em 5em;
 }
 
@@ -74,5 +74,10 @@ main {
 
 .alerts .success {
     background-color: rgb(45, 135, 87);
+}
+
+html{
+  overflow-y: scroll;
+
 }
 </style>

@@ -17,6 +17,10 @@ export default {
       callback: () => {
         console.log("ahere");
         this.$store.commit('setGroupId', null);
+        this.$store.commit('updateSearchedWord', null);
+        this.$store.commit('updateIsSearch', false);
+        this.$store.commit('updateGroups', []);
+        this.$store.commit('updateFreets', []);
         this.$router.push({name: 'Login'}); // Goes to Home page after signing out
         this.$store.commit('alert', {
           message: 'You are now signed out!', status: 'success'

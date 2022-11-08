@@ -2,19 +2,27 @@
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
 <template>
+  <div v-if="!isXed && !isdeleted" class="fullfreet">
+  <div v-if="$store.state.isSearch" class="X-container"> <div class="X" @click="X()">X</div> </div>
   <article
     class="freet"
   >
     <header>
-      <h3 class="author">
-        @{{ freet.author }}
+      <div class="author">
+      <h3>
+        {{ freet.author }}
       </h3>
+      <button class="deleteButton" @click="deleteFreet()" v-if="$store.state.isInAccount"> Delete</button>
+      </div>
     </header>
+    <div class="content">
     <div v-if="!freet.isMultiOnly">
       {{ freet.textContent }}
     </div>
-    <img src = freet.imageContent /> 
-      
+    <br>
+
+    <img v-bind:src="freet.imageContent"/> 
+  </div>
     <p class="info">
       Posted at {{ freet.dateCreated }}
       <i v-if="freet.edited">(edited)</i>
@@ -29,6 +37,7 @@
       </article>
     </section>
   </article>
+  </div>
 </template>
 
 <script>
@@ -43,100 +52,93 @@ export default {
   },
   data() {
     return {
+      isdeleted: false,
+      isXed: false,
       editing: false, // Whether or not this freet is in edit mode
       draft: this.freet.content, // Potentially-new content for this freet
       alerts: {} // Displays success/error messages encountered during freet modification
     };
   },
   methods: {
-    startEditing() {
-      /**
-       * Enables edit mode on this freet.
-       */
-      this.editing = true; // Keeps track of if a freet is being edited
-      this.draft = this.freet.content; // The content of our current "draft" while being edited
-    },
-    stopEditing() {
-      /**
-       * Disables edit mode on this freet.
-       */
-      this.editing = false;
-      this.draft = this.freet.content;
-    },
-    deleteFreet() {
-      /**
-       * Deletes this freet.
-       */
-      const params = {
-        method: 'DELETE',
-        callback: () => {
-          this.$store.commit('alert', {
-            message: 'Successfully deleted freet!', status: 'success'
-          });
-        }
-      };
-      this.request(params);
-    },
-    submitEdit() {
-      /**
-       * Updates freet to have the submitted draft content.
-       */
-      if (this.freet.content === this.draft) {
-        const error = 'Error: Edited freet content should be different than current freet content.';
-        this.$set(this.alerts, error, 'error'); // Set an alert to be the error text, timeout of 3000 ms
-        setTimeout(() => this.$delete(this.alerts, error), 3000);
-        return;
-      }
-
-      const params = {
-        method: 'PATCH',
-        message: 'Successfully edited freet!',
-        body: JSON.stringify({content: this.draft}),
-        callback: () => {
-          this.$set(this.alerts, params.message, 'success');
-          setTimeout(() => this.$delete(this.alerts, params.message), 3000);
-        }
-      };
-      this.request(params);
-    },
-    async request(params) {
-      /**
-       * Submits a request to the freet's endpoint
-       * @param params - Options for the request
-       * @param params.body - Body for the request, if it exists
-       * @param params.callback - Function to run if the the request succeeds
-       */
+    async X(){
+      const url = `/api/X`;
+      const fields = new Object();
+      fields.freetId = this.freet._id;
       const options = {
-        method: params.method, headers: {'Content-Type': 'application/json'}
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          credentials: 'same-origin',
+          body: JSON.stringify(fields),
       };
-      if (params.body) {
-        options.body = params.body;
-      }
 
-      try {
-        const r = await fetch(`/api/freets/${this.freet._id}`, options);
-        if (!r.ok) {
-          const res = await r.json();
-          throw new Error(res.error);
+      const r = await fetch(url, options);
+      const res = await r.json();
+      if(r.ok) {
+        this.isXed = true;
+      }
+    },
+    async deleteFreet() {
+      const url = `/api/freets/${this.freet._id}`;
+        try{
+            const r = await fetch(url,{method: 'DELETE'});
+            const res = await r.json();
+            if(!r.ok) {
+                console.log(res.error);
+                throw new Error(res.error);
+                this.alerts = res.error;
+            }
+            this.isdeleted = true;
+        } catch (e) {
+            console.log(e);
+            console.log(e.message);
+            console.log(typeof e.message);
+            this.alerts = e.message;
+            console.log(this.alerts);
+            setTimeout(() => this.alerts = '', 3000);   
         }
-
-        this.editing = false;
-        this.$store.commit('refreshFreets');
-
-        params.callback();
-      } catch (e) {
-        this.$set(this.alerts, e, 'error');
-        setTimeout(() => this.$delete(this.alerts, e), 3000);
-      }
     }
   }
 };
 </script>
 
 <style scoped>
+.author{
+  padding-left: 10px;
+  padding-right: 10px;
+  border-bottom: 0.5px solid grey;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.X-container {
+  border: 0.5px solid grey;
+  border-bottom: none;
+  display: flex;
+  justify-content: flex-end;
+}
+.X {
+  text-align: center;
+  width: 2.5%;
+}
 .freet {
-    border: 1px solid #111;
-    padding: 20px;
+    border: 0.5px solid grey;
+    padding-top: none;
     position: relative;
+    margin-bottom: 20px;
+    /* box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); */
+
+}
+
+.content {
+  padding: 20px;
+}
+
+img {
+  width:100%;
+  height: 100%;
+}
+
+.deleteButton{
+  height: 50%;
 }
 </style>

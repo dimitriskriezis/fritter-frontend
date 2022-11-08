@@ -12,24 +12,25 @@ import UserCollection from '../user/collection';
  * and contains all the information in Freet. https://mongoosejs.com/docs/typescript.html
  */
 class FreetCollection {
-  /**
+   /**
    * Add a freet to the collection
    *
    * @param {string} authorId - The id of the author of the freet
    * @param {string} content - The id of the content of the freet
    * @return {Promise<HydratedDocument<Freet>>} - The newly created freet
    */
-  static async addOne(authorId: Types.ObjectId | string, content: string): Promise<HydratedDocument<Freet>> {
-    const date = new Date();
-    const freet = new FreetModel({
-      authorId,
-      dateCreated: date,
-      content,
-      dateModified: date
-    });
-    await freet.save(); // Saves freet to MongoDB
-    return freet.populate('authorId');
-  }
+    static async addOne(authorId: Types.ObjectId | string, content: string, image: string, isMultiOnly: boolean): Promise<HydratedDocument<Freet>> {
+      const date = new Date();
+      const freet = new FreetModel({
+        authorId: authorId,
+        dateCreated: date,
+        textContent: content,
+        imageContent: image,
+        isMultiOnly: isMultiOnly
+      });
+      await freet.save(); // Saves freet to MongoDB
+      return freet.populate('authorId');
+    }
 
   /**
    * Find a freet by freetId
@@ -97,11 +98,11 @@ class FreetCollection {
    */
      static async findOneWithMode(freetId: Types.ObjectId | string, freetFilter: number): Promise<HydratedDocument<Freet>>{
       if (freetFilter == 2){
-        return FreetModel.findOne({_id: freetId, isMultiOnly: true});
+        return FreetModel.findOne({_id: freetId, isMultiOnly: true}).populate('authorId');
       }else if(freetFilter == 1){
-        return FreetModel.findOne({_id: freetId, isMultiOnly: false});
+        return FreetModel.findOne({_id: freetId, isMultiOnly: false}).populate('authorId');
       }else{
-        return FreetModel.findOne({_id: freetId});
+        return FreetModel.findOne({_id: freetId}).populate('authorId');
     }
   }
 

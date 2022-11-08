@@ -93,7 +93,7 @@ Every component takes advantage of an [HTML-based template syntax](https://v2.vu
   </header>
   <article>
     <h3>
-      <router-link to="/login">
+      <router-link to="/">
         Sign in
       </router-link>
       to create, edit, and delete freets.

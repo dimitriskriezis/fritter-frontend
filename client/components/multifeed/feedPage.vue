@@ -1,21 +1,27 @@
 <template>
     <main>
-      <section v-if="condition">
-        <header>
+      <div 
+        v-if="$store.state.isSearch"
+        class="search-indicator"
+        >
+           <p > Search Results for tag {{$store.state.searchedWord}}</p>
+          </div>
+      <section class="fullFeed" v-if="condition">
         <div class="mode-toggle-container">
         <div class="mode-toggle">
-          <div @click="getAllFreets('0')">
-            All
-          </div >
-          <div @click="getAllFreets('1')">
-            Text
-          </div>
-          <div @click="getAllFreets('2')">
-            Image
-          </div>
+          <button class="modebutton" @click="getAllFreets('0')">
+            <img class="modeimg" src="../../public/all.svg"/>
+            
+          </button>
+          <button @click="getAllFreets('1')">
+            <img class="modeimg" src="../../public/doc.svg"/>
+          </button>
+          <button @click="getAllFreets('2')">
+            <img class="modeimg" src="../../public/image.svg"/>
+      
+          </button>
         </div>
         </div>
-        </header>
       <section class="feed">
         <section 
           v-if="$store.state.freets.length"
@@ -32,7 +38,8 @@
           <h3>No freets found.</h3>
         </article>
       </section>
-      <button class="find-member" @click="findMember()">Find member</button>
+      <button v-if="!$store.state.isSearch" class="find-member" @click="findMember()"> <img class="finduserimg" src="../../public/finduser.svg">
+</button>
       <div id="overlay"
         v-if="addMember"
         >
@@ -58,7 +65,7 @@
                   </div>
                   <p v-else> No Users found</p>
                 </div>
-                <button @click="stopFindMember()"> Cancel</button>
+                <button @click="stopFindMember()"> Close </button>
         </div>
         </div>
         </div> 
@@ -87,15 +94,15 @@
         alerts: {}, // Displays success/error messages encountered during form submission
       };
     },
-    async mounted() {
+    mounted() {
         console.log(this.$store.state.groupId);
-        if(this.$store.state.groupId){
-            await this.getAllFreets("0");
+        if(this.$store.state.groupId || this.$store.state.isSearch){
+            this.getAllFreets("0");
         }
     },
     computed: {
         condition() {
-            return this.$store.state.groupId;
+            return this.$store.state.groupId || this.$store.state.isSearch;
         }
     },
     methods: {
@@ -118,8 +125,9 @@
               this.isSuccess = false;
               this.errorMessage = res.error;
           }else{
-          this.isSucess = true;
+          this.isSuccess = true;
           this.successMessage = `You have successfully added ${this.username_searched} to the group`;
+          await this.getAllFreets("0");
           } 
         },
         async remove() {
@@ -134,7 +142,8 @@
             }
              else{
                 this.isSuccess = true;
-                this.successMessage = `successfully removed user ${this.searched_username}`;
+                await this.getAllFreets("0");
+                this.successMessage = `successfully removed user ${this.username_searched}`;
             }
             
 
@@ -180,6 +189,12 @@
         },
         stopFindMember(){
           this.addMember = false;
+          this.userFound = null;
+          this.username_searched= '';
+          this.has_searched= false;
+          this.isSuccess= false;
+          this.successMessage= '';
+          this.errorMessage= '';
         },
         async getAllFreets(mode) {
             const url = `/api/feed`;
@@ -213,31 +228,50 @@
 
 <style scoped>
     .mode-toggle-container{
-      background-color: white;
+      position:fixed;
       z-index: 1;
+      height: 60px;
+      background-color: white;
+      width:100%;
+      padding-top: 10px;
     }
     .mode-toggle{
-        position:fixed;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        /* position:fixed;
+        
         display:flex;
         height:50px;
-        margin-left: 20%;
+        left: 50%;
+        width: 30;
         margin-top: 0px;
         z-index: 1;
-        background: white;
+        background-color1: blue; */
+        
+        height: 100%;
+        display: flex;
+        width: 10%;
+        margin-left: 40%;
+        margin-right: 45%;
+        
         /* margin-right: 25%; */
     }
     .feed{
         position: relative;
-        top:50px;
-        margin-left:300px;
-        margin-right:300px;
+        top:60px;
+        margin-left:23%;
+        margin-right:23%;
     }
-    .find-member{
+  .find-member{
+    background-color: #78c5df;
     position: fixed;
-    padding: 20px;
     bottom: 50px;
     right: 50px; 
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    align-items: center;
+    
 }
 
 #overlay {
@@ -269,5 +303,24 @@
   border-style: solid;
   padding: 10px;
 }
+
+
+.search-indicator{
+  position: fixed;
+  text-align: center;
+  width: 25%;
+  top: 50;
+  left: 0;
+  z-index : 2;
+}
+
+.modeimg{
+  width: 30px;
+  height: 30px;
+}
+  .finduserimage{
+    width: 30px;
+    height: 30px;
+  }
 
 </style>

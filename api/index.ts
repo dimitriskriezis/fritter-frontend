@@ -12,6 +12,8 @@ import {freetRouter} from '../server/freet/router';
 import MongoStore from 'connect-mongo';
 import { groupsRouter } from '../server/groups/router';
 import {modeRouter} from '../server/multifeed/router';
+import {tagRouter} from '../server/tagged-search/router';
+import {XRouter} from '../server/X/router';
 
 // Load environmental variables
 dotenv.config({});
@@ -39,6 +41,8 @@ mongoose.connection.on('error', err => {
 
 // Initalize an express app
 const app = express();
+
+app.use(express.json({limit: '25mb'}));
 
 // Set the port
 app.set('port', process.env.PORT || 3000);
@@ -74,6 +78,9 @@ app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
 app.use('/api/groups', groupsRouter);
 app.use('/api/feed', modeRouter);
+app.use('/api/tag', tagRouter);
+app.use('/api/X', XRouter);
+
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {

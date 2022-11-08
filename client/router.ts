@@ -10,9 +10,9 @@ import FeedPage from './components/multifeed/feedPage.vue';
 Vue.use(VueRouter);
 
 const routes = [
-  {path: '/', name: 'Home', component: FreetsPage},
+  // {path: '/', name: 'Home', component: LoginPage},
   {path: '/account', name: 'Account', component: AccountPage},
-  {path: '/login', name: 'Login', component: LoginPage},
+  {path: '/', name: 'Login', component: LoginPage},
   {path: '/groups', name: 'Groups', component: GroupsPage},
   {path: '/feed', name: 'Feed', component: FeedPage},
   {path: '*', name: 'Not Found', component: NotFound}
@@ -26,17 +26,19 @@ const router = new VueRouter({routes});
 router.beforeEach((to, from, next) => {
   if (router.app.$store) {
     if (to.name === 'Login' && router.app.$store.state.username) {
-      next({name: 'Account'}); // Go to Account page if user navigates to Login and are signed in
+      next({name: 'Groups'}); // Go to Account page if user navigates to Login and are signed in
       return;
     }
-
     if (to.name === 'Account' && !router.app.$store.state.username) {
       next({name: 'Login'}); // Go to Login page if user navigates to Account and are not signed in
       return;
     }
     if (to.name == 'Groups' && !router.app.$store.state.username) {
-      next({name: 'Login'}); // Go to Login page i user navigate to Groups and are not signed in
+      next({name: 'Login'}); // Go to `Login page i user navigate to Groups and are not signed in
       return;
+    }
+    if(to.name == 'Login'  && router.app.$store.state.username) {
+      next({name:'Groups'});
     }
   }
 

@@ -10,6 +10,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
+    myfreets:[],
     freets: [], // All freets created in the app
     username: null, // Username of the logged in user
     userId: null,
@@ -17,6 +18,9 @@ const store = new Vuex.Store({
     searching: false,
     alerts: {}, // global success/error messages encountered during submissions to non-visible forms
     groups: [], // all groups of a user
+    isSearch: false,
+    isInAccount: false,
+    searchedWord: null,
   },
   mutations: {
     alert(state, payload) {
@@ -52,13 +56,31 @@ const store = new Vuex.Store({
     setGroupId(state, groupId) {
       state.groupId = groupId;
     },
+    updateMyFreets(state, myfreets) {
+      state.myfreets = myfreets;
+    },
+    async refreshMyFreets(state) {
+      const url = `/api/freets?author=${state.username}`
+      const res = await fetch(url).then(async r => r.json());
+      console.log(res);
+      state.myfreets = res;
+      
+    },
     setUserId(state, userId) {
       state.groupId = userId;
     },
     updateGroups(state, groups) {
       state.groups = groups;
     },
-    
+    updateIsSearch(state, isSearch){
+      state.isSearch = isSearch;
+    },
+    updateIsInAccount(state, isInAccount){
+      state.isInAccount = isInAccount;
+    },
+    updateSearchedWord(state, word){
+      state.searchedWord = word;
+    },
     async refreshGroups(state){
       const url = `/api/groups`;
       const r = await fetch(url);

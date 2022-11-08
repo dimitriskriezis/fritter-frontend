@@ -52,8 +52,10 @@ class TagCollection {
    */
   static async findAllWithTag(tag:string) : Promise<Array<HydratedDocument<Tag>>>{
     return TagModel.find({tag: tag});
+  } 
+  static async deleteMany(freetId: Types.ObjectId | string): Promise<void> {
+    await TagModel.deleteMany({freetId});
   }
-    
 }
 
 export default TagCollection;

@@ -26,6 +26,10 @@ class FeedCollection {
     static async findAllFreetsByTag(userId: Types.ObjectId | string, tag: string, mode:Number):Promise<Array<HydratedDocument<Freet>>>{
         // get all Xed freets of user and don't display them on user's feed
         const notIncludeFreets = new Set();
+        const userFreets = await FreetCollection.findAllByUserIdAndMode(userId, Number(mode));
+        for (const userFreet of userFreets){
+            notIncludeFreets.add(userFreet._id.toString());
+        }
         const xedPosts = await XCollection.findAllByUserId(userId);
         for (const xedPost of xedPosts){
             notIncludeFreets.add(xedPost.freetId.toString());

@@ -3,7 +3,10 @@
     <main>
       <section>
         <header>
-          <h2>Choose a group to continue</h2>
+           <div class="addGroup">
+          <h2>Choose a group to continue or </h2> 
+          <button class="addGroupButton" @click = "addGroup" > Add a Group </button>
+           </div>
         </header>
       </section>
       <section
@@ -19,10 +22,9 @@
         </div>
         <!-- <p v-if="">hallo</p> -->
         <!-- <div v-if="group.id==2"> hallo</div> -->
-        <div @click = "addGroup" class="group">
-            Add Group
         </div>
-        </div>
+        
+    
         <div 
         id="overlay"
         v-if="makeGroup"
@@ -64,7 +66,6 @@ export default {
     mounted() {
         this.getAllGroups()
     },
-
     methods: {
         cancelGroup(){
             this.makeGroup=false;
@@ -168,14 +169,29 @@ export default {
     align-items: center;
 }
 .group-container{
-    display:flex;
-    gap: 20px;
+  margin-top: 50px;
+  display: flex;
 }
-.group-container .group{
+.group{
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   width: 200px;
+  height:250px;
   margin: 5px;
   text-align: center;
+}
 
+.addGroup{
+    margin-top: 100px;
+    display: flex;
+    align-items: center;
+    gap: 10px
+}
+
+.addGroupButton{
+    width: 100px;
+    height: 50px;
+    background-color:  #78c5df;
+    border: None;
+    font-size: 15px;
 }
 </style>

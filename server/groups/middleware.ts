@@ -54,7 +54,7 @@ const isUserAddsHimself = async(req:Request, res:Response, next:NextFunction) =>
 }
 
 const isGroupMemberExistsDelete = async (req: Request, res: Response, next: NextFunction) => {
-    if(!req.session.groupId){
+    if(!req.query.groupId){
         res.status(404).json({
             error: `No group specified`
         });
